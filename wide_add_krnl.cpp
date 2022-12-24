@@ -365,55 +365,55 @@ extern "C"
 //#pragma HLS INTERFACE s_axilite port = return bundle = control
 //
 //
-//    	const int loop = m;
-//
-//    	int A_bram[n][m];
-//    	int B_bram[p][n];
-//
-//    #pragma HLS ARRAY_PARTITION variable=A_bram cyclic factor 8 dim=2
-//    #pragma HLS ARRAY_PARTITION variable=B_bram cyclic factor 8 dim=1
-//
-//
-//    	for(int i = 0; i < m; i++){
-//    #pragma HLS loop_tripcount min=loop max=loop
-//
-//    		uint512_dt in1local = in1[i];
-//    		uint512_dt resultV;
-//
-//    			for(int j = 0; j < m; j++){
-//					#pragma HLS PIPELINE II=1
-//    				A_bram[i][j] = in1local.range(32*(j + 1) - 1, j*32);
-//    			}
-//
-//				for(int j = 0; j < m; j++){
-//					#pragma HLS loop_tripcount min=loop max=loop
-//
-//					//if(i == 0){
-//						uint512_dt in2local = in2[j];
-//
-//
-//						for(int k = 0; k< m ; k++){
-//							#pragma HLS PIPELINE II=1
-//							B_bram[k][j] = in2local.range(32*(k + 1) - 1, k*32);
-//						//}
-//					}
-//
-//
-//					#pragma HLS PIPELINE II=1
-//					int result = 0;
-//					for(int k = 0 ; k < m ; k++){
-//						result += A_bram[i][k] * B_bram[k][j] ;
-//					}
-//
-//				resultV.range(32 * (j + 1) - 1, j * 32) = result;
-//
-//    			}
-//
-//			out[i] = resultV;
-//
-//    	}
-//    }
-//}
+   	const int loop = m;
+
+   	int A_bram[n][m];
+   	int B_bram[p][n];
+
+   #pragma HLS ARRAY_PARTITION variable=A_bram cyclic factor 8 dim=2
+   #pragma HLS ARRAY_PARTITION variable=B_bram cyclic factor 8 dim=1
+
+
+   	for(int i = 0; i < m; i++){
+   #pragma HLS loop_tripcount min=loop max=loop
+
+   		uint512_dt in1local = in1[i];
+   		uint512_dt resultV;
+
+   			for(int j = 0; j < m; j++){
+					#pragma HLS PIPELINE II=1
+   				A_bram[i][j] = in1local.range(32*(j + 1) - 1, j*32);
+   			}
+
+				for(int j = 0; j < m; j++){
+					#pragma HLS loop_tripcount min=loop max=loop
+
+					if(i == 0){
+						uint512_dt in2local = in2[j];
+
+
+						for(int k = 0; k< m ; k++){
+							#pragma HLS PIPELINE II=1
+							B_bram[k][j] = in2local.range(32*(k + 1) - 1, k*32);
+						}
+					}
+
+
+					#pragma HLS PIPELINE II=1
+					int result = 0;
+					for(int k = 0 ; k < m ; k++){
+						result += A_bram[i][k] * B_bram[k][j] ;
+					}
+
+				resultV.range(32 * (j + 1) - 1, j * 32) = result;
+
+   			}
+
+			out[i] = resultV;
+
+   	}
+   }
+}
 
 
 
